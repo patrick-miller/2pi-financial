@@ -1,0 +1,8 @@
+# Git Workflow
+
+- Fork the repo
+- Add a waffle card for a new feature
+- Checkout a new branch corresponding to the waffle number
+- Make commits
+- Push to that feature branch and close the issue in waffle
+- Submit PR
