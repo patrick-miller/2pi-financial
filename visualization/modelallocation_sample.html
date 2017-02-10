@@ -17,9 +17,9 @@
 </head>
 <body>
 
-  <h1>Model Comparison Sample</h1>
+  <h1>Portfolio Allocation Sample </h1>
   
-  <div id="modelcomparison_plot"></div>
+  <div id="portfolioallocation_plot"></div>
 
   <script>
   var vSpec = {
@@ -36,19 +36,11 @@
       }
     },
     {
-      "name": "model_allocations",
-      "url": "data/sample_modelallocations.csv",
+      "name": "allocations",
+      "url": "data/sample_allocations.csv",
       "format": {
         "type": "csv",
-        "parse": {"time_step": "number","model": "string","equity_allocation": "number"}
-      }
-    },
-    {
-      "name": "model_returns",
-      "url": "data/sample_modelreturns.csv",
-      "format": {
-        "type": "csv",
-        "parse": {"time_step": "number","model": "string","return": "number"}
+        "parse": {"time_step": "number","asset": "string","weight": "number"}
       }
     }
   ],
@@ -72,8 +64,8 @@
       "name": "allocation_lines",
       "type": "group",
         "from": {
-          "data": "model_allocations",
-          "transform": [{"type": "facet","groupby": "model"}]
+          "data": "allocations",
+          "transform": [{"type": "facet","groupby": "asset"}]
         },
       "marks": [
       {
@@ -86,36 +78,9 @@
             },
             "y": {
               "scale": "yscale_allocations",
-              "field": "equity_allocation"
+              "field": "weight"
             },
-            "stroke": {"scale": "colorscale","field": "model"},
-            "strokeWidth": {"value": 3},
-            "strokeOpacity": {"value": 0.8}
-          }
-        }
-      }]
-    },
-   {
-      "name": "return_lines",
-      "type": "group",
-        "from": {
-          "data": "model_returns",
-          "transform": [{"type": "facet","groupby": "model"}]
-        },
-      "marks": [
-      {
-        "type": "line",
-        "properties": {
-          "update": {
-            "x": {
-              "scale": "xscale",
-              "field": "time_step"
-            },
-            "y": {
-              "scale": "yscale_returns",
-              "field": "return"
-            },
-            "stroke": {"scale": "colorscale","field": "model"},
+            "stroke": {"scale": "colorscale","field": "asset"},
             "strokeWidth": {"value": 3},
             "strokeOpacity": {"value": 0.8}
           }
@@ -127,7 +92,7 @@
     {
       "name": "colorscale",
       "type": "ordinal",
-      "domain": {"data": "model_allocations", "field": "model"},
+      "domain": {"data": "allocations", "field": "asset"},
       "range": "category10",
       "zero": "true",
       "round": "true"
@@ -144,8 +109,8 @@
       "name": "yscale_spx",
       "type": "linear",
       "domain": {"data": "spx_data", "field": "spx"},
-      "rangeMin": 0,
-      "rangeMax": 120,
+      "rangeMin": 210,
+      "rangeMax": 400,
       "reverse": "true",
       "zero": "true",
       "round": "true",
@@ -154,20 +119,9 @@
     {
       "name": "yscale_allocations",
       "type": "linear",
-      "domain": {"data": "model_allocations", "field": "equity_allocation"},
-      "rangeMin": 135,
-      "rangeMax": 255,
-      "reverse": "true",
-      "zero": "true",
-      "round": "true",
-      "nice": "true"
-    },
-    {
-      "name": "yscale_returns",
-      "type": "linear",
-      "domain": {"data": "model_returns", "field": "return"},
-      "rangeMin": 270,
-      "rangeMax": 390,
+      "domain": {"data": "allocations", "field": "weight"},
+      "rangeMin": 0,
+      "rangeMax": 190,
       "reverse": "true",
       "zero": "true",
       "round": "true",
@@ -187,21 +141,15 @@
     },
     {
       "type": "y",
-      "title": "Model Allocations",
+      "title": "Portfolio Allocations",
       "scale": "yscale_allocations",
-      "format": "%"
-    },
-    {
-      "type": "y",
-      "title": "Returns",
-      "scale": "yscale_returns",
       "format": "%"
     }
   ] ,
   "legends": [
     {
       "fill": "colorscale",
-      "title": "model",
+      "title": "asset",
       "properties": {
         "symbols": {
           "shape": {"value": "circle"},
@@ -219,7 +167,7 @@
     actions: false
   };
 
-  vg.embed("#modelcomparison_plot", embedSpec, function(error, result) {
+  vg.embed("#portfolioallocation_plot", embedSpec, function(error, result) {
   
   });
   </script>
