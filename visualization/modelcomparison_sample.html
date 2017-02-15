@@ -52,7 +52,30 @@
       }
     }
   ],
+  "signals": [
+    {
+      "name": "index_time",
+      "init": 10,
+      "streams": [{
+        "type": "mousemove",
+        "expr": "clamp(eventX(), 0, eventGroup('root').width)",
+        "scale": {"name": "xscale", "invert": true}
+      }]
+    }
+  ],
   "marks": [
+    { 
+      "name": "vertical_line",
+      "type":"rule",
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale", "signal": "index_time"},
+          "y": {"value": 0},
+          "y2": {"field": {"group": "height"}},
+          "stroke": {"value": "red"}
+        }
+      }
+    },
     {     
       "name": "spx_line",
       "type": "line",
@@ -144,8 +167,8 @@
       "name": "yscale_spx",
       "type": "linear",
       "domain": {"data": "spx_data", "field": "spx"},
-      "rangeMin": 0,
-      "rangeMax": 120,
+      "rangeMin": 270,
+      "rangeMax": 390,
       "reverse": "true",
       "zero": "true",
       "round": "true",
@@ -155,8 +178,8 @@
       "name": "yscale_allocations",
       "type": "linear",
       "domain": {"data": "model_allocations", "field": "equity_allocation"},
-      "rangeMin": 135,
-      "rangeMax": 255,
+      "rangeMin": 0,
+      "rangeMax": 120,
       "reverse": "true",
       "zero": "true",
       "round": "true",
@@ -166,8 +189,8 @@
       "name": "yscale_returns",
       "type": "linear",
       "domain": {"data": "model_returns", "field": "return"},
-      "rangeMin": 270,
-      "rangeMax": 390,
+      "rangeMin": 135,
+      "rangeMax": 255,
       "reverse": "true",
       "zero": "true",
       "round": "true",

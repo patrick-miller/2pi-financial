@@ -44,7 +44,30 @@
       }
     }
   ],
+  "signals": [
+    {
+      "name": "index_time",
+      "init": 10,
+      "streams": [{
+        "type": "mousemove",
+        "expr": "clamp(eventX(), 0, eventGroup('root').width)",
+        "scale": {"name": "xscale", "invert": true}
+      }]
+    }
+  ],
   "marks": [
+    { 
+      "name": "vertical_line",
+      "type":"rule",
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale", "signal": "index_time"},
+          "y": {"value": 0},
+          "y2": {"field": {"group": "height"}},
+          "stroke": {"value": "red"}
+        }
+      }
+    },
     {     
       "name": "spx_line",
       "type": "line",
