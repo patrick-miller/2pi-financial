@@ -42,6 +42,26 @@
         "type": "csv",
         "parse": {"time_step": "number","asset": "string","weight": "number"}
       }
+    },
+    {
+      "name": "index_spx",
+      "source": "spx_data",
+      "transform": [
+        {
+          "type": "filter",
+          "test": "datum.time_step == round(index_time)"
+        }
+      ]
+    },
+    {
+      "name": "index_allocations",
+      "source": "allocations",
+      "transform": [
+        {
+          "type": "filter",
+          "test": "datum.time_step == round(index_time)"
+        }
+      ]
     }
   ],
   "signals": [
@@ -50,7 +70,7 @@
       "init": 10,
       "streams": [{
         "type": "mousemove",
-        "expr": "clamp(eventX(), 0, eventGroup('root').width)",
+        "expr": "clamp(eventX(), 0, width)",
         "scale": {"name": "xscale", "invert": true}
       }]
     }
@@ -84,6 +104,22 @@
       }
     },
     {
+      "name": "spx_text",
+      "type": "text",
+      "from": {
+        "data": "index_spx"
+      },
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale", "field": "time_step"},
+          "y": {"scale": "yscale_spx", "field": "spx", "offset": 10},
+          "fill": {"value": "black"},
+          "text": {"template": "S&P 500: {{datum.spx|number: 'd'}}"},
+          "baseline": {"value": "middle"}
+        }
+      },
+    },
+    {
       "name": "allocation_lines",
       "type": "group",
         "from": {
@@ -108,7 +144,23 @@
             "strokeOpacity": {"value": 0.8}
           }
         }
-      }]
+      },
+    {
+      "name": "allocation_text",
+      "type": "text",
+      "from": {
+        "data": "index_allocations"
+      },
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale", "field": "time_step", "offset": 5},
+          "y": {"scale": "yscale_allocations", "field": "weight", "offset": 15},
+          "fill": {"scale": "colorscale","field": "asset"},
+          "text": {"template": "{{datum.asset}}: {{datum.weight|number: '.3p'}}"},
+          "baseline": {"value": "middle"}
+        }
+      },
+    }]
     }
   ],
   "scales": [
