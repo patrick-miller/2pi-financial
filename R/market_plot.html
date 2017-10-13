@@ -1,0 +1,195 @@
+<head>
+  <meta charset="utf-8">
+
+<!-- Install with npm install vega -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vega/2.6.5/vega.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vega-lite/1.3.1/vega-lite.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vega-embed/2.2.0/vega-embed.min.js" charset="utf-8"></script>
+ 
+  <style media="screen">
+    /* Add space between vega-embed links  */
+    .vega-actions a {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Market regime time series</h1>
+  
+  <div id="market_plot"></div>
+
+  <script>
+  var vSpec = {
+  "width": 600,
+  "height": 400,
+  "padding": "auto",
+  "data": [
+    {
+      "name": "base_data",
+      "url": "data/base_data.csv",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "date": "date",
+          "lagged_date": "date",
+          "colorv": "string",
+          "SPRealIndex": "number"
+        }
+      }
+    },
+    {
+      "name": "date_summary_data",
+      "source": "base_data",
+      "transform": [
+        {
+          "type": "aggregate",
+          "ops": ["min", "max"],
+          "as": ["min_date", "max_date"]
+        }
+      ]
+    }
+    <!-- { -->
+      <!-- "name": "model_allocations", -->
+      <!-- "url": "data/sample_modelallocations.csv", -->
+      <!-- "format": { -->
+        <!-- "type": "csv", -->
+        <!-- "parse": {"time_step": "number","model": "string","equity_allocation": "number"} -->
+      <!-- } -->
+    <!-- }, -->
+    <!-- { -->
+      <!-- "name": "model_returns", -->
+      <!-- "url": "data/sample_modelreturns.csv", -->
+      <!-- "format": { -->
+        <!-- "type": "csv", -->
+        <!-- "parse": {"time_step": "number","model": "string","return": "number"} -->
+      <!-- } -->
+    <!-- } -->
+  ],
+  <!-- "signals": [ -->
+    <!-- { -->
+      <!-- "name": "index_time", -->
+      <!-- "init": 10, -->
+      <!-- "streams": [{ -->
+        <!-- "type": "mousemove", -->
+        <!-- "expr": "clamp(eventX(), 0, eventGroup('root').width)", -->
+        <!-- "scale": {"name": "xscale", "invert": true} -->
+      <!-- }] -->
+    <!-- } -->
+  <!-- ], -->
+  "marks": [
+    <!-- {  -->
+      <!-- "name": "vertical_line", -->
+      <!-- "type":"rule", -->
+      <!-- "properties": { -->
+        <!-- "update": { -->
+          <!-- "x": {"scale": "xscale", "signal": "index_time"}, -->
+          <!-- "y": {"value": 0}, -->
+          <!-- "y2": {"field": {"group": "height"}}, -->
+          <!-- "stroke": {"value": "red"} -->
+        <!-- } -->
+      <!-- } -->
+    <!-- }, -->
+    {     
+      "name": "spx_line",
+      "type": "line",
+      "from": {
+        "data": "base_data"
+      },
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale","field": "date"},
+          "y": {"scale": "yscale_spx","field": "SPRealIndex"},
+          "strokeWidth": {"value": 1.5},
+          "stroke": {"value": "black"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "base_data"},
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale", "field": "date"},
+          "x2": {"scale": "xscale", "field": "lagged_date"},
+          "y": {"value": 0},
+          "y2": {"signal": "height"},
+          "fill": {"scale": "colorscale", "field": "colorv"},
+          "opacity": {"value": 0.2}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "colorscale",
+      "type": "ordinal",
+      "domain": {"data": "base_data", "field": "colorv"},
+      "range": ["purple", "green", "red", "blue"]
+    },
+    {
+      "name": "xscale",
+      "type": "time",
+      "domain": {"fields": [
+        {"data": "base_data", "field": "date"},
+        {"data": "base_data", "field": "lagged_date"}
+      ]},
+      "range": "width",
+      "zero": "true",
+      "round": "true"
+    },
+    {
+      "name": "yscale_spx",
+      "type": "linear",
+      "domain": {"data": "base_data", "field": "SPRealIndex"},
+      "range": "height",
+      "zero": "true",
+      "round": "true",
+      "nice": "true"
+    }
+  ],
+  "axes": [
+    {
+      "type": "x",
+      "title": "date",
+      "scale": "xscale"
+    },
+    {
+      "type": "y",
+      "title": "S&P 500",
+      "scale": "yscale_spx"
+    }
+  ] ,
+  "legends": [
+    {
+      "fill": "colorscale",
+      "title": "Period",
+      "orient": "top-left",
+      "properties": {
+        "symbols": {
+          "update": {
+            "strokeWidth": {"value": 0},
+            "shape": {"value": "square"},
+            "opacity": {"value": 0.2},
+            "fillOpacity": {"value": 0.2}
+          }
+        }
+      }
+    }
+  ]
+}
+
+
+  var embedSpec = {
+    mode: "vega", 
+    spec: vSpec,
+    actions: false
+  };
+
+  vg.embed("#market_plot", embedSpec, function(error, result) {
+  
+  });
+  </script>
+</body>
+</html>
