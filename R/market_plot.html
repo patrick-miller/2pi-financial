@@ -24,7 +24,17 @@
   var vSpec = {
   "width": 600,
   "height": 400,
-  "padding": "auto",
+  "padding": {"top": 10,"left": 70,"bottom": 60,"right": 190},
+  "signals": [
+    {
+      "name": "index_date",
+      "streams": [{
+        "type": "mousemove",
+        "expr": "clamp(eventX(), 0, eventGroup('root').width)",
+        "scale": {"name": "xscale", "invert": true}
+      }]
+    }
+  ],
   "data": [
     {
       "name": "base_data",
@@ -49,48 +59,57 @@
           "as": ["min_date", "max_date"]
         }
       ]
+    },    
+    {
+      "name": "period_lookup",
+      "url": "data/period_lookup.csv",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "colorv": "string",
+          "return1": "number",
+          "return2": "number"
+        }
+      }
+    },
+    {
+      "name": "index_date_lookup",
+      "source": "base_data",
+      "transform": [
+        {
+          "type": "filter",
+          "test": "datum.date <= index_date && datum.lagged_date >= index_date"
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["colorv"],
+          "summarize": [{
+            "field": "date", "ops": ["count"], "as": ["count"]      
+          }]
+        },
+        {
+          "type": "lookup",
+          "on": "period_lookup", "onKey": "colorv",
+          "keys": ["colorv"], 
+          "as": ["lookup"],
+          "default": -1
+        }
+      ]        
     }
-    <!-- { -->
-      <!-- "name": "model_allocations", -->
-      <!-- "url": "data/sample_modelallocations.csv", -->
-      <!-- "format": { -->
-        <!-- "type": "csv", -->
-        <!-- "parse": {"time_step": "number","model": "string","equity_allocation": "number"} -->
-      <!-- } -->
-    <!-- }, -->
-    <!-- { -->
-      <!-- "name": "model_returns", -->
-      <!-- "url": "data/sample_modelreturns.csv", -->
-      <!-- "format": { -->
-        <!-- "type": "csv", -->
-        <!-- "parse": {"time_step": "number","model": "string","return": "number"} -->
-      <!-- } -->
-    <!-- } -->
   ],
-  <!-- "signals": [ -->
-    <!-- { -->
-      <!-- "name": "index_time", -->
-      <!-- "init": 10, -->
-      <!-- "streams": [{ -->
-        <!-- "type": "mousemove", -->
-        <!-- "expr": "clamp(eventX(), 0, eventGroup('root').width)", -->
-        <!-- "scale": {"name": "xscale", "invert": true} -->
-      <!-- }] -->
-    <!-- } -->
-  <!-- ], -->
   "marks": [
-    <!-- {  -->
-      <!-- "name": "vertical_line", -->
-      <!-- "type":"rule", -->
-      <!-- "properties": { -->
-        <!-- "update": { -->
-          <!-- "x": {"scale": "xscale", "signal": "index_time"}, -->
-          <!-- "y": {"value": 0}, -->
-          <!-- "y2": {"field": {"group": "height"}}, -->
-          <!-- "stroke": {"value": "red"} -->
-        <!-- } -->
-      <!-- } -->
-    <!-- }, -->
+    { 
+      "name": "vertical_line",
+      "type":"rule",
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale", "signal": "index_date"},
+          "y": {"value": 0},
+          "y2": {"field": {"group": "height"}},
+          "stroke": {"value": "red"}
+        }
+      }
+    },
     {     
       "name": "spx_line",
       "type": "line",
@@ -119,6 +138,66 @@
           "opacity": {"value": 0.2}
         }
       }
+    },
+    {
+      "type": "group",
+      "from": {"data": "index_date_lookup"},
+      "properties": {
+        "update": {
+          "x": {"scale": "xscale", "signal": "index_date", "offset": 5},
+          "y": {"value": 100},
+          "width": {"value": 120},
+          "height": {"value": 60},
+          "strokeWidth": {"value": 1},
+          "stroke": {"value": "black"},
+          "fill": {"value": "white"}
+        }
+      },
+      "marks": [
+      {
+        "type": "text",
+        "properties": {
+          "update": {
+            "x": {"value": 5},
+            "y": {"value": 14},
+            "fontSize": {"value": 14},
+            "fill": {"value": "black"},
+            "fontWeight": {"value": "bold"},
+            "text": {
+              "template": "colorv: {{parent.colorv}}"
+            }
+          }
+        }
+      },
+      {
+        "type": "text",
+        "properties": {
+          "update": {
+            "x": {"value": 5},
+            "y": {"value": 30},
+            "fontSize": {"value": 14},
+            "fill": {"value": "black"},
+            "text": {
+              "template": "1yr return: {{parent.lookup.return1|number: '.3p'}}"
+              }
+            }
+          }
+        },        
+        {
+          "type": "text",
+          "properties": {
+            "update": {
+              "x": {"value": 5},
+              "y": {"value": 50},
+              "fontSize": {"value": 14},
+              "fill": {"value": "black"},
+              "text": {
+                "template": "5yr return: {{parent.lookup.return2|number: '.3p'}}"
+                }
+              }
+            }
+        }
+      ]
     }
   ],
   "scales": [
