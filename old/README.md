@@ -19,8 +19,6 @@ add database resource to the application
 ## Set up for development
 
 git clone
-virtualenv venv
-source venv/bin/Activate
 pip install -r requirements
 export FLASKENV=development
 create Postgres database
