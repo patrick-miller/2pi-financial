@@ -9,5 +9,5 @@ app/static/css/app.*
 app/static/js/app.*
 logs/
 data/
-
 config.py
+R/data
