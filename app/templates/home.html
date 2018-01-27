@@ -4,14 +4,12 @@
 {% import "helpers/forms.html" as forms %}
 
 {% block title %}Sign up for access{% endblock %}
-{% block body %}
+
 {{super()}}
 <form action="" method=post class="form-horizontal">
 {{ forms.render(form) }}
 <p><input type="submit" value="Sign up"></p>
 </form>
-{% endblock body %}
-
 
     <section id="main-slider" class="no-margin">
         <div class="carousel slide wet-asphalt">

@@ -1,28 +1,22 @@
 from flask import render_template, url_for, redirect
-
-from main import app, nav, db
-from forms import EmailForm
-from models import Email
+from app import app, nav, db, EmailForm, EmailList
 
 
 # Navigation bars
-nav.Bar('mvp', [
+nav.Bar('nav', [
     nav.Item('Home', 'home'),
     nav.Item('FAQ', 'faq'),
-    nav.Item('About', 'about'),
-    nav.Item('Request access', 'access')
+    nav.Item('About', 'about')
 ])
 
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    return "Hello World from Flask in a uWSGI Nginx Docker container with \
-        Python 3.6 (from the example template)"
     form = EmailForm()
         
     if form.validate_on_submit():                        
         dat = {'email': form.email.data}    
-        email = Email.create(**dat)
+        email = EmailList.create(**dat)
         
         return redirect(url_for('access'))
         
@@ -30,7 +24,7 @@ def home():
 
 
 @app.route('/access')
-def request_access():
+def access():
     return render_template('access.html')
     
     
@@ -40,8 +34,8 @@ def faq():
 
 
 @app.route('/about')
-def faq():
-    return render_template('faq.html')
+def about():
+    return render_template('about.html')
 
     
 @app.errorhandler(404)
