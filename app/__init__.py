@@ -9,10 +9,9 @@ import logging
 app = Flask(__name__)
 app.config.from_object('config')
 app.secret_key = app.config['SECRET_KEY']
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////base/app.db'
 
 # Set up logging
-file_handler = logging.FileHandler('app.log')
+file_handler = logging.FileHandler('logs/app.log')
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 
