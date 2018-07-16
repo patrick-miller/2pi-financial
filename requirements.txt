@@ -9,7 +9,7 @@ SQLAlchemy==1.0.8
 WTForms==2.0.2
 Werkzeug==0.9.6
 decorator==4.0.4
-gunicorn==19.1.1
+gunicorn==19.9.0
 itsdangerous==0.24
 packaging==16.0
 psycopg2==2.7.3.2
