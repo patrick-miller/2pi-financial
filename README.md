@@ -12,8 +12,9 @@ docker run -it --rm --name 2pi  \
 ```
 
 ## Environment variables for production
+
+Need to figure out how to attach a Google Analytics key to the application...
 ```
 export ENV=prod
-export GOOGLE_ANALYTICS=xxxxx
 export DATABASE_URI=xxxxx
 ```
