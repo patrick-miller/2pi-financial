@@ -12,9 +12,11 @@ docker run -it --rm --name 2pi  \
 ```
 
 ## Environment variables for production
-
-Need to figure out how to attach a Google Analytics key to the application...
 ```
 export ENV=prod
 export DATABASE_URI=xxxxx
 ```
+
+## Attaching Google Analytics
+In the `__init__.py` file for the application, there is a line for inputting the Google Analytics
+account key. If you want to switch it, change that and make a pull request.
